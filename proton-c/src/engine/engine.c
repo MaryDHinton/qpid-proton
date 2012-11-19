@@ -1208,13 +1208,21 @@ void pn_delivery_set_context(pn_delivery_t *delivery, void *context)
         delivery->context = context;
 }
 
+pn_delivery_tag_t pn_dtag(const char *bytes, size_t size)				
+{
+  pn_delivery_tag_t delivt;
+  delivt.bytes = bytes;
+  delivt.size = size;
+  return delivt;
+}
+
 pn_delivery_tag_t pn_delivery_tag(pn_delivery_t *delivery)
 {
   if (delivery) {
     pn_bytes_t tag = pn_buffer_bytes(delivery->tag);
     return pn_dtag(tag.start, tag.size);
   } else {
-    return (pn_delivery_tag_t) {0};
+    return pn_dtag(0,0);
   }
 }
 
