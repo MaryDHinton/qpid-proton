@@ -121,7 +121,7 @@ int pn_dispatch_frame(pn_dispatcher_t *disp, pn_frame_t frame)
     return 0;
   }
 
-  ssize_t dsize = pn_data_decode(disp->args, frame.payload, frame.size);
+  ssize_t dsize = pn_data_decode(disp->args, (const char *) frame.payload, frame.size);			// explicit cast
   if (dsize < 0) {
     fprintf(stderr, "Error decoding frame: %s %s\n", pn_code(dsize),
             pn_data_error(disp->args));
@@ -380,7 +380,7 @@ int pn_post_transfer_frame(pn_dispatcher_t *disp, uint16_t ch,
     while (!(n = pn_write_frame(disp->output + disp->available,
                                 disp->capacity - disp->available, frame))) {
       disp->capacity *= 2;
-      disp->output = realloc(disp->output, disp->capacity);
+      disp->output = (char *) realloc(disp->output, disp->capacity);			// explicit cast
     }
     disp->output_frames_ct += 1;
     if (disp->trace & PN_TRACE_RAW) {

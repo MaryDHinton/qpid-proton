@@ -58,7 +58,7 @@ int pn_do_outcome(pn_dispatcher_t *disp);
 pn_sasl_t *pn_sasl(pn_transport_t *transport)
 {
   if (!transport->sasl) {
-    pn_sasl_t *sasl = malloc(sizeof(pn_sasl_t));
+    pn_sasl_t *sasl = (pn_sasl_t *) malloc(sizeof(pn_sasl_t));			// explicit cast
     sasl->disp = pn_dispatcher(1, sasl);
     sasl->disp->batch = false;
 
@@ -361,7 +361,7 @@ int pn_do_mechanisms(pn_dispatcher_t *disp)
 
 int pn_do_recv(pn_dispatcher_t *disp)
 {
-  pn_sasl_t *sasl = disp->context;
+  pn_sasl_t *sasl = (pn_sasl_t *) disp->context;		// explicit cast
   pn_bytes_t recv;
   int err = pn_scan_args(disp, "D.[z]", &recv);
   if (err) return err;
@@ -381,11 +381,11 @@ int pn_do_response(pn_dispatcher_t *disp)
 
 int pn_do_outcome(pn_dispatcher_t *disp)
 {
-  pn_sasl_t *sasl = disp->context;
+  pn_sasl_t *sasl = (pn_sasl_t *) disp->context;		// explicit cast
   uint8_t outcome;
   int err = pn_scan_args(disp, "D.[B]", &outcome);
   if (err) return err;
-  sasl->outcome = outcome;
+  sasl->outcome = (pn_sasl_outcome_t) outcome;			// explicit cast
   sasl->rcvd_done = true;
   sasl->sent_done = true;
   disp->halt = true;

@@ -217,7 +217,7 @@ int pn_message_set_durable(pn_message_t *msg, bool durable)
 
 uint8_t pn_message_get_priority(pn_message_t *msg)
 {
-  return msg ? msg->priority : PN_DEFAULT_PRIORITY;
+  return msg ? msg->priority : (uint8_t) PN_DEFAULT_PRIORITY;			// explicit cast
 }
 int pn_message_set_priority(pn_message_t *msg, uint8_t priority)
 {
@@ -457,7 +457,7 @@ int pn_message_decode(pn_message_t *msg, const char *bytes, size_t size)
 
   while (size) {
     pn_data_clear(msg->data);
-    ssize_t used = pn_data_decode(msg->data, bytes, size);
+    ssize_t used = pn_data_decode(msg->data, (const char *) bytes, size);		// explicit cast
     if (used < 0) return pn_error_format(msg->error, used, "data error: %s",
                                          pn_data_error(msg->data));
     size -= used;

@@ -37,7 +37,7 @@
 void pn_delivery_buffer_init(pn_delivery_buffer_t *db, pn_sequence_t next, size_t capacity)
 {
   // XXX: error handling
-  db->deliveries = malloc(sizeof(pn_delivery_state_t) * capacity);
+  db->deliveries = (pn_delivery_state_t*) malloc(sizeof(pn_delivery_state_t) * capacity);			// explicit cast
   db->next = next;
   db->capacity = capacity;
   db->head = 0;
@@ -400,7 +400,7 @@ void pn_link_set_context(pn_link_t *link, void *context)
 
 void pn_endpoint_init(pn_endpoint_t *endpoint, int type, pn_connection_t *conn)
 {
-  endpoint->type = type;
+  endpoint->type = (pn_endpoint_type_t) type;			// explicit cast
   endpoint->state = PN_LOCAL_UNINIT | PN_REMOTE_UNINIT;
   endpoint->error = pn_error();
   endpoint->endpoint_next = NULL;
@@ -1642,7 +1642,7 @@ int pn_do_flow(pn_dispatcher_t *disp)
 
 int pn_do_disposition(pn_dispatcher_t *disp)
 {
-  pn_transport_t *transport = disp->context;
+  pn_transport_t *transport = (pn_transport_t *) disp->context;		// explicit cast
   bool role;
   pn_sequence_t first, last;
   uint64_t code;
@@ -1653,7 +1653,7 @@ int pn_do_disposition(pn_dispatcher_t *disp)
   if (!last_init) last = first;
 
   pn_session_state_t *ssn_state = pn_channel_state(transport, disp->channel);
-  pn_disposition_t dispo = 0;
+  pn_disposition_t dispo = (pn_disposition_t) 0;				// explicit cast
   if (code_init) {
     switch (code)
     {

@@ -36,8 +36,8 @@ size_t pn_read_frame(pn_frame_t *frame, const char *bytes, size_t available)
       frame->type = bytes[5];
       frame->channel = htons(*((uint16_t *) (bytes + 6)));
 
-      frame->extended = bytes + AMQP_HEADER_SIZE;
-      frame->payload = bytes + doff;
+      frame->extended = (char *) bytes + AMQP_HEADER_SIZE;		// explicit cast
+      frame->payload = (char *) bytes + doff;					// explicit cast
       return size;
     }
   }

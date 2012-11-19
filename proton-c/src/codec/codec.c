@@ -330,7 +330,7 @@ size_t pn_atoms_ltrim(pn_atoms_t *atoms, size_t size)
 int pn_format_atoms_one(pn_bytes_t *bytes, pn_atoms_t *atoms, int level)
 {
   if (!atoms->size) return PN_UNDERFLOW;
-  pn_iatom_t *atom = atoms->start;
+  pn_iatom_t *atom = (pn_iatom_t *) atoms->start;			// explicit cast
   pn_atoms_ltrim(atoms, 1);
   int err, count;
 
@@ -606,7 +606,7 @@ int pn_encode_type(pn_bytes_t *bytes, pn_atoms_t *atoms, pn_type_t *type)
 
 int pn_encode_value(pn_bytes_t *bytes, pn_atoms_t *atoms, pn_type_t type)
 {
-  pn_iatom_t *atom = atoms->start;
+  pn_iatom_t *atom = (pn_iatom_t *) atoms->start;			// explicit cast
   int e;
   conv_t c;
 
@@ -1310,7 +1310,7 @@ int pn_data_vfill(pn_data_t *data, const char *fmt, va_list ap)
       {
         pn_node_t *parent = pn_data_node(data, data->parent);
         if (parent->atom.type == PN_ARRAY) {
-          parent->type = va_arg(ap, int);
+          parent->type = (pn_type_t) va_arg(ap, int);			// explicit cast
         } else {
           return pn_error_format(data->error, PN_ERR, "naked type");
         }
@@ -1325,7 +1325,7 @@ int pn_data_vfill(pn_data_t *data, const char *fmt, va_list ap)
         } else {
           described = false;
         }
-        err = pn_data_put_array(data, described, 0);
+        err = pn_data_put_array(data, described,(pn_type_t) 0);			// explicit cast
         pn_data_enter(data);
       }
       break;
@@ -1442,7 +1442,7 @@ static bool pn_scan_next(pn_data_t *data, pn_type_t *type, bool suspend)
       pn_data_exit(data);
       return pn_scan_next(data, type, suspend);
     } else {
-      *type = -1;
+      *type = (pn_type_t) -1;			// explicit cast
       return false;
     }
   }
@@ -2173,7 +2173,7 @@ int pn_data_parse_atoms(pn_data_t *data, pn_atoms_t atoms, int offset, int limit
 
   for (i = offset; i < atoms.size; i++) {
     if (count == limit) return i - offset;
-    pn_iatom_t atom = atoms.start[i];
+    pn_iatom_t atom = (pn_iatom_t) atoms.start[i];			// explicit cast
     if (atom.type == PN_TYPE) return PN_ERR;
     switch (atom.type)
     {
@@ -2286,7 +2286,7 @@ int pn_data_parse_atoms(pn_data_t *data, pn_atoms_t atoms, int offset, int limit
     case PN_ARRAY:
       {
         bool described = (atoms.start[i+1].type == PN_DESCRIPTOR);
-        pn_data_put_array(data, described, 0);
+        pn_data_put_array(data, described, (pn_type_t) 0);			// explicit cast
         pn_node_t *array = pn_data_current(data);
         pn_data_enter(data);
         if (described) {

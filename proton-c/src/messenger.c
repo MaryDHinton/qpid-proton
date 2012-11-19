@@ -751,7 +751,7 @@ pn_subscription_t *pn_messenger_subscribe(pn_messenger_t *messenger, const char 
     if (lnr) {
       pn_subscription_t *sub = pn_subscription(messenger, scheme);
       pn_listener_set_context(lnr, sub);
-      return sub;
+      return (int) sub;								// explicit cast
     } else {
       pn_error_format(messenger->error, PN_ERR,
                       "unable to subscribe to source: %s (%s)", source,
@@ -762,7 +762,7 @@ pn_subscription_t *pn_messenger_subscribe(pn_messenger_t *messenger, const char 
     pn_link_t *src = pn_messenger_source(messenger, source);
     if (src) {
       pn_subscription_t *sub = pn_link_get_context(src);
-      return sub;
+      return (int) sub;								// explicit cast
     } else {
       pn_error_format(messenger->error, PN_ERR,
                       "unable to subscribe to source: %s (%s)", source,
