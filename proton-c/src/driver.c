@@ -630,6 +630,15 @@ pn_driver_t *pn_driver()
   d->wakeup = 0;
 
   // XXX
+#ifdef _WINDOWS
+  int err = 0;
+  WORD wVersionRequested;
+  WSADATA wsaData;
+
+  // Request WinSock 2.2 
+  wVersionRequested = MAKEWORD(2, 2);
+  err = WSAStartup(wVersionRequested, &wsaData);
+#endif
   if (pipe(d->ctrl)) {
     perror("Can't create control pipe");
   }
@@ -665,6 +674,9 @@ void pn_driver_free(pn_driver_t *d)
   free(d->fds);
   pn_error_free(d->error);
   free(d);
+#ifdef _WINDOWS
+  WSACleanup();					// cleanup Windows socket library 
+#endif
 }
 
 int pn_driver_wakeup(pn_driver_t *d)
