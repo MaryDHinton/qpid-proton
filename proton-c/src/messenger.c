@@ -148,7 +148,7 @@ pn_sequence_t pn_queue_add(pn_queue_t *queue, pn_delivery_t *delivery)
 {
   pn_sequence_t id = queue->hwm++;
   size_t offset = id - queue->lwm;
-  PN_ENSUREZ(queue->deliveries, queue->capacity, offset + 1);
+  PN_ENSUREZ(queue->deliveries, queue->capacity, offset + 1, pn_delivery_t **);
   assert(offset >= 0 && offset < queue->capacity);
   queue->deliveries[offset] = delivery;
   pn_delivery_set_context(delivery, (void *) (intptr_t) id);
@@ -664,7 +664,7 @@ pn_connection_t *pn_messenger_resolve(pn_messenger_t *messenger, char *address, 
 
 pn_subscription_t *pn_subscription(pn_messenger_t *messenger, const char *scheme)
 {
-  PN_ENSURE(messenger->subscriptions, messenger->sub_capacity, messenger->sub_count + 1);
+  PN_ENSURE(messenger->subscriptions, messenger->sub_capacity, messenger->sub_count + 1, pn_subscription_t *);
   pn_subscription_t *sub = messenger->subscriptions + messenger->sub_count++;
   sub->scheme = pn_strdup(scheme);
   sub->context = NULL;
